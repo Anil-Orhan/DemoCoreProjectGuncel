@@ -1,0 +1,61 @@
+﻿@model Demo.Core.MvcUI.Model.CartListViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/_Layout.cshtml";
+}
+
+<h2>Your Cart</h2>
+<table class="table">
+
+    <tr>
+        <td>Product Name</td>
+        <td>Unit Price</td>
+        <td>Unit In Stock</td>
+        <td>Quantity</td>
+        <td></td>
+    </tr>
+
+    @foreach (var item in Model.Cart.CartLine)
+    {
+        <tr>
+
+            <td>@item.Products.ProductName</td>
+            <td>@item.Products.UnitPrice</td>
+            <td>@item.Products.UnitsInStock</td>
+            <td>@item.Products</td>
+            <td class="text-right"><a class="btn btn-xs btn-danger" asp-controller="Cart" asp-action="Remove" asp-route-productId="@item.Products.ProductID"><span class="glyphicon glyphicon-remove"> Remove From Cart</span></a></td>
+        </tr>
+    }
+    <tr>
+
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>
+            <h3>Total</h3>
+        </td>
+        <td class="text-right"> 
+            <h3>
+                <strong>
+                    @Model.Cart.Total
+                </strong>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>
+            <a asp-controller="Product" asp-action="Index" class="btn-xs btn-default">
+                <span class="glyphicon glyphicon-align-left glyphicon-shopping-cart">Continue Shopping</span>
+            </a>
+        </td>
+          <td class="text-right">
+            <a asp-controller="Cart" asp-action="Complete" class="btn-xs btn-success">
+                <span class="glyphicon glyphicon-shopping-play">Continue Checkout</span>
+            </a>
+        </td>
+    </tr>
+</table>
+
