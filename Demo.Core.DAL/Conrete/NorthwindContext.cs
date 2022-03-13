@@ -3,16 +3,21 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Demo.Core.DAL.Conrete
 {
-    public class NorthwindContext:DbContext
+    public class NorthwindContext:IdentityDbContext
     {
-      
+
+        public NorthwindContext(DbContextOptions<NorthwindContext> dbContextOptions):base(dbContextOptions)
+        {
+                
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\ProjectsV13;Database=Northwind;Trusted_Connection=true");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\ProjectsV13;Database=Northwind; integrated security=true; Trusted_Connection=true;");
 
         }
         public DbSet<Products> Products { get; set; }

@@ -27,6 +27,7 @@ namespace Demo.Core.MvcUI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
         }
 
         public IConfiguration Configuration { get; }
@@ -40,16 +41,20 @@ namespace Demo.Core.MvcUI
             services.AddScoped<ICategoryDal, EfCategoryDal>();
             services.AddSingleton<ICartSessionService, CartSessionService>();
             services.AddScoped<ICartService, CartManager>(); 
-            services.AddDbContext<CustomIdentityDbContext>
+            services.AddDbContext<NorthwindContext>
 
                 (options => options.UseSqlServer(@"Server= (localdb)\ProjectsV13; Initial Catalog = Northwind; Integrated Security = True"));
-            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
-                .AddEntityFrameworkStores<CustomIdentityDbContext>()
+            
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<NorthwindContext>()
                 .AddDefaultTokenProviders();
+
+          
             services.AddMvc();
             services.AddSession();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDistributedMemoryCache();
+          
 
 
             //services.Configure<CookiePolicyOptions>(options =>
