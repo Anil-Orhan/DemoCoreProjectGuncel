@@ -45,7 +45,20 @@ namespace Demo.Core.MvcUI
 
                 (options => options.UseSqlServer(@"Server= (localdb)\ProjectsV13; Initial Catalog = Northwind; Integrated Security = True"));
             
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<IdentityUser, IdentityRole>(
+
+                    opt =>
+                    {
+
+                        opt.Password.RequireDigit=true;
+                        opt.Password.RequireLowercase=false;
+                        opt.Password.RequireUppercase=false;
+                        opt.Password.RequireNonAlphanumeric = false;
+                        opt.Password.RequiredLength = 6;
+
+                    }
+
+                    )
                 .AddEntityFrameworkStores<NorthwindContext>()
                 .AddDefaultTokenProviders();
 
@@ -82,8 +95,12 @@ namespace Demo.Core.MvcUI
             app.UseFileServer();
             app.UseNodeModules(env.ContentRootPath);
             //app.UseIdentity();
+            
+            app.UseAuthentication();
+            
             app.UseSession();
             app.UseMvc(ConfiguretionRoutes);
+
         }
         private void ConfiguretionRoutes(IRouteBuilder routeBuilder)
         {

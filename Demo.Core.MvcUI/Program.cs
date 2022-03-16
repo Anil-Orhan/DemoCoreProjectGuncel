@@ -23,6 +23,8 @@ namespace Demo.Core.MvcUI
                 .Build();
             host.Run();
 
+            BuildWebHost(args).Run();
+
         }
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)

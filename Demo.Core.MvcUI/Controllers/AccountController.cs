@@ -1,4 +1,5 @@
-﻿using Demo.Core.MvcUI.Entities;
+﻿using System.Threading.Tasks;
+using Demo.Core.MvcUI.Entities;
 using Demo.Core.MvcUI.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,12 +8,12 @@ namespace Demo.Core.MvcUI.Controllers
 {
     public class AccountController : Controller
     {
-        public UserManager<CustomIdentityUser> _userManager;
-        public RoleManager<CustomIdentityRole> _roleManager;
-        public SignInManager<CustomIdentityUser> _signInManager;
+        public UserManager<IdentityUser> _userManager;
+        public RoleManager<IdentityRole> _roleManager;
+        public SignInManager<IdentityUser> _signInManager;
 
-        public AccountController(UserManager<CustomIdentityUser> userManager,
-            RoleManager<CustomIdentityRole> roleManager, SignInManager<CustomIdentityUser> signInManager)
+        public AccountController(UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager, SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -30,7 +31,7 @@ namespace Demo.Core.MvcUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                CustomIdentityUser user = new CustomIdentityUser
+                IdentityUser user = new IdentityUser
                 {
                     UserName = registerViewModel.UserName,
                     Email = registerViewModel.Email
@@ -40,7 +41,7 @@ namespace Demo.Core.MvcUI.Controllers
                 {
                     if (!_roleManager.RoleExistsAsync("Admin").Result)
                     {
-                        CustomIdentityRole role = new CustomIdentityRole
+                        IdentityRole role = new IdentityRole
                         {
                             Name = "Admin"
                         };
@@ -60,17 +61,9 @@ namespace Demo.Core.MvcUI.Controllers
             return View(registerViewModel);
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
+      
         public ActionResult Login()
         {
-
-
-
-
             return View();
         }
 
@@ -78,14 +71,20 @@ namespace Demo.Core.MvcUI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public ActionResult Login(LoginViewModel loginViewModel)
+        public async Task<ActionResult> Login(LoginViewModel loginViewModel)
         {
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByNameAsync(loginViewModel.UserName);
                 var result = _signInManager.PasswordSignInAsync(loginViewModel.UserName, loginViewModel.Password,
                     loginViewModel.RememberMe, false).Result;
                 if (result.Succeeded)
                 {
+                    var IsAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                    if (IsAdmin==false)
+                    {
+                        return View(loginViewModel);
+                    }
                     return RedirectToAction("Index", "Admin");
 
                 }
